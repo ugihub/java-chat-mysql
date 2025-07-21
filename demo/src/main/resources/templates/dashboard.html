@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Reset dan Font */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: #f5f7fa;
+        min-height: 100vh;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 220px;
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 0 0 0;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        box-shadow: 2px 0 16px rgba(30, 60, 114, 0.08);
+      }
+      .sidebar .logo {
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-bottom: 36px;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar .logo span {
+        background: #fff;
+        color: #2a5298;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .sidebar nav {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 40px;
+      }
+      .sidebar nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 32px;
+        border-radius: 8px 0 0 8px;
+        font-weight: 500;
+        transition: background 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar nav a.active,
+      .sidebar nav a:hover {
+        background: #fff;
+        color: #2a5298;
+      }
+      .sidebar .sidebar-bottom {
+        margin-top: auto;
+        padding-bottom: 32px;
+      }
+      .sidebar .sidebar-bottom button {
+        background: #fff;
+        color: #2a5298;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 24px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar .sidebar-bottom button:hover {
+        background: #e0e0e0;
+        color: #1e3c72;
+      }
+
+      .main-content {
+        margin-left: 220px;
+        width: calc(100vw - 220px);
+        padding: 40px 40px 40px 40px;
+        background: #f5f7fa;
+        min-height: 100vh;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      .dashboard-header .greeting {
+        background: #e9eafd;
+        color: #2a5298;
+        border-radius: 18px;
+        padding: 28px 36px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-width: 320px;
+        box-shadow: 0 2px 8px rgba(30, 60, 114, 0.06);
+      }
+      .dashboard-header .profile {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .dashboard-header .profile .avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .dashboard-header .profile .username {
+        font-weight: 600;
+        color: #2a5298;
+        font-size: 1.1rem;
+      }
+
+      .overview {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+      .overview .overview-card {
+        flex: 1;
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px 0 24px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(30, 60, 114, 0.06);
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2a5298;
+      }
+      .overview .overview-card.yellow {
+        background: #fffbe6;
+        color: #e6b800;
+      }
+      .overview .overview-card.purple {
+        background: #e9eafd;
+        color: #2a5298;
+      }
+      .overview .overview-card.pink {
+        background: #ffe6f0;
+        color: #e74c3c;
+      }
+      .overview .overview-card.blue {
+        background: #e6f0ff;
+        color: #1e3c72;
+      }
+
+      .section-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px 32px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 8px rgba(30, 60, 114, 0.06);
+      }
+      .section-card h3 {
+        color: #2a5298;
+        margin: 0 0 18px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        padding: 0;
+      }
+      .section-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .section-card li {
+        background: #f5f7fa;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #2a5298;
+        box-shadow: 0 2px 6px rgba(30, 60, 114, 0.03);
+      }
+      .section-card li br {
+        display: block;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        padding: 10px 12px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="password"]:focus {
+        border-color: #2a5298;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.2);
+      }
+
+      button {
+        padding: 10px;
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+
+      button:hover {
+        background: linear-gradient(45deg, #2a5298, #1e3c72);
+        transform: translateY(-2px);
+      }
+
+      #notificationArea {
+        background: #e9eafd;
+        border-left: 4px solid #2a5298;
+        padding: 15px 32px;
+        margin-bottom: 28px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(30, 60, 114, 0.06);
+      }
+
+      #invitationList li {
+        background: #fff;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #invitationList button {
+        padding: 5px 10px;
+        font-size: 12px;
+        margin-left: 10px;
+      }
+
+      .empty-message {
+        color: #888;
+        font-style: italic;
+      }
+
+      @media (max-width: 1100px) {
+        .main-content {
+          padding: 24px 8px 24px 8px;
+        }
+        .overview {
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+      @media (max-width: 900px) {
+        .sidebar {
+          width: 60px;
+          min-width: 60px;
+          padding: 16px 0 0 0;
+        }
+        .sidebar .logo span,
+        .sidebar .logo {
+          font-size: 1rem;
+          width: 28px;
+          height: 28px;
+        }
+        .sidebar nav a {
+          padding: 10px 10px;
+          font-size: 0.9rem;
+        }
+        .main-content {
+          margin-left: 60px;
+          width: calc(100vw - 60px);
+        }
+      }
+      @media (max-width: 600px) {
+        .main-content {
+          padding: 8px 2px 8px 2px;
+        }
+        .dashboard-header .greeting {
+          font-size: 1rem;
+          padding: 12px 10px;
+        }
+        .dashboard-header .profile .avatar {
+          width: 32px;
+          height: 32px;
+          font-size: 0.9rem;
+        }
+        .overview .overview-card {
+          font-size: 0.9rem;
+          padding: 12px 0 12px 0;
+        }
+        .section-card {
+          padding: 12px 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo"><span>C</span>chat.in</div>
+      <nav>
+        <a href="/dashboard" class="active">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="/join-private-room">Join Private Room</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <form action="/logout" method="post" style="margin: 0">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button type="submit">Logout</button>
+        </form>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="dashboard-header">
+        <div class="greeting">
+          Hi, [[${#authentication.principal.username}]]<br />
+          <span style="font-size: 1rem; font-weight: 400"
+            >Selamat datang di dashboard chat Anda!</span
+          >
+        </div>
+        <div class="profile">
+          <div class="avatar">
+            [[${#authentication.principal.username.substring(0,1).toUpperCase()}]]
+          </div>
+          <div class="username">[[${#authentication.principal.username}]]</div>
+        </div>
+      </div>
+      <div class="overview">
+        <div class="overview-card yellow">
+          Room Privat:
+          <span th:text="${ownedRooms != null ? ownedRooms.size() : 0}"></span>
+        </div>
+        <div class="overview-card purple">
+          Room Diikuti:
+          <span
+            th:text="${participantRooms != null ? participantRooms.size() : 0}"
+          ></span>
+        </div>
+        <div class="overview-card pink">
+          Room Publik:
+          <span
+            th:text="${publicRooms != null ? publicRooms.size() : 0}"
+          ></span>
+        </div>
+        <div class="overview-card blue">
+          Undangan:
+          <span
+            th:text="${incomingInvitations != null ? incomingInvitations.size() : 0}"
+          ></span>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Room Publik</h3>
+        <ul th:if="${publicRooms != null and !publicRooms.isEmpty()}">
+          <li th:each="room : ${publicRooms}">
+            Nama Room: [[${room.name}]]<br />
+            <a
+              th:href="@{/chat(roomId=${room.id})}"
+              th:text="'Gabung ke Room Publik'"
+            ></a
+            ><br />
+            <form th:action="@{/room/public/delete}" method="post">
+              <input type="hidden" name="roomId" th:value="${room.id}" />
+              <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+              <button
+                type="submit"
+                th:if="${room.owner != null and room.owner.id == #authentication.principal.id}"
+              >
+                Hapus Room
+              </button>
+            </form>
+          </li>
+        </ul>
+        <p
+          class="empty-message"
+          th:if="${publicRooms == null or publicRooms.isEmpty()}"
+        >
+          Tidak ada room publik yang tersedia.
+        </p>
+      </div>
+      <div class="section-card">
+        <h3>Gabung ke Room Privat</h3>
+        <p><a href="/join-private-room">Gabung ke Room Privat</a></p>
+      </div>
+      <div
+        style="display: flex; gap: 24px; margin-bottom: 28px; flex-wrap: wrap"
+      >
+        <div class="section-card" style="flex: 1 1 0; min-width: 320px">
+          <h3>Room Privat Saya</h3>
+          <ul th:if="${ownedRooms != null and !ownedRooms.isEmpty()}">
+            <li th:each="room : ${ownedRooms}">
+              [[${room.name}]] (Milik Saya)<br />
+              Kode Undangan: [[${room.inviteCode}]]<br />
+              <a th:href="@{/private-chat(roomId=${room.id})}">Gabung</a><br />
+              <form th:action="@{/room/private/delete}" method="post">
+                <input type="hidden" name="roomId" th:value="${room.id}" />
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                <button
+                  type="submit"
+                  th:if="${room.owner.id == #authentication.principal.id}"
+                >
+                  Hapus Room
+                </button>
+              </form>
+            </li>
+          </ul>
+          <p
+            class="empty-message"
+            th:if="${ownedRooms == null or ownedRooms.isEmpty()}"
+          >
+            Tidak ada room privat yang Anda buat
+          </p>
+        </div>
+        <div class="section-card" style="flex: 1 1 0; min-width: 320px">
+          <h3>Room Privat yang Diikuti</h3>
+          <ul
+            th:if="${participantRooms != null and !participantRooms.isEmpty()}"
+          >
+            <li th:each="room : ${participantRooms}">
+              [[${room.name}]] (Peserta)<br />
+              <a th:href="@{/private-chat(roomId=${room.id})}">Gabung</a>
+            </li>
+          </ul>
+          <p
+            class="empty-message"
+            th:if="${participantRooms == null or participantRooms.isEmpty()}"
+          >
+            Tidak ada room privat yang diikuti
+          </p>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Buat Room Publik</h3>
+        <form method="post" action="/room/public">
+          <input type="text" name="name" placeholder="Nama Room" required />
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button type="submit">Buat Room Publik</button>
+        </form>
+      </div>
+      <div class="section-card">
+        <h3>Buat Room Privat</h3>
+        <form method="post" action="/room/private">
+          <input type="text" name="name" placeholder="Nama Room" required />
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button type="submit">Buat Room Privat</button>
+        </form>
+      </div>
+      <div id="notificationArea">
+        <h4>Notifikasi Undangan</h4>
+        <ul id="invitationList"></ul>
+      </div>
+      <div class="section-card">
+        <h3>Undangan Masuk</h3>
+        <ul
+          th:if="${incomingInvitations != null and !incomingInvitations.isEmpty()}"
+        >
+          <li th:each="invitation : ${incomingInvitations}">
+            [[${invitation.invitedUser.username}]] ingin bergabung ke room
+            [[${invitation.roomPrivate.name}]]
+            <form
+              method="post"
+              th:action="@{/invite/respond}"
+              onsubmit="event.preventDefault(); respondToInvitation(this)"
+            >
+              <input
+                type="hidden"
+                name="invitationId"
+                th:value="${invitation.id}"
+              />
+              <input type="hidden" name="response" value="APPROVED" />
+              <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+              <button type="submit" class="btn btn-success btn-sm">
+                Setujui
+              </button>
+            </form>
+
+            <form
+              method="post"
+              th:action="@{/invite/respond}"
+              onsubmit="event.preventDefault(); respondToInvitation(this)"
+            >
+              <input
+                type="hidden"
+                name="invitationId"
+                th:value="${invitation.id}"
+              />
+              <input type="hidden" name="response" value="DENIED" />
+              <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+              <button type="submit" class="btn btn-danger btn-sm">Tolak</button>
+            </form>
+          </li>
+        </ul>
+        <p
+          class="empty-message"
+          th:if="${incomingInvitations == null or incomingInvitations.isEmpty()}"
+        >
+          Tidak ada undangan masuk
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function respondToInvitation(form) {
+        const invitationId = form.querySelector("[name='invitationId']").value;
+        const response = form.querySelector("[name='response']").value;
+
+        fetch("/invite/respond", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": /*[(${_csrf.token})]*/ "token",
+          },
+          body: JSON.stringify({ invitationId, response }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              const item = document.getElementById(
+                "invitation-" + invitationId
+              );
+              if (item) {
+                item.remove();
+              }
+            }
+          })
+          .catch((err) => {
+            console.error("Gagal memproses undangan:", err);
+          });
+      }
+    </script>
+
+    <script th:inline="javascript">
+      function showCreateRoomModal() {
+        document.getElementById("createRoomModal").style.display = "block";
+      }
+
+      function showJoinPrivateModal() {
+        document.getElementById("joinPrivateModal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.querySelectorAll(".modal-overlay").forEach((modal) => {
+          modal.style.display = "none";
+        });
+      }
+
+      // Simulate window resize for responsive layout
+      window.addEventListener("resize", () => {
+        // Code for dynamic layout adjustments if needed
+      });
+
+      function connectWebSocket() {
+        const socket = new SockJS("/ws");
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+          // ✅ Subscribe ke notifikasi
+          stompClient.subscribe(
+            "/user/" + userId + "/queue/notifications",
+            (response) => {
+              const data = JSON.parse(response.body);
+
+              // ✅ Tampilkan alert berdasarkan tipe
+              if (data.type === "APPROVED") {
+                alert("✅ Undangan Disetujui: " + data.message);
+              } else if (data.type === "DENIED") {
+                alert("❌ Undangan Ditolak: " + data.message);
+              }
+
+              // Tambahkan item ke UI
+              const item = document.createElement("li");
+              item.textContent = data.message;
+
+              if (data.roomId) {
+                const joinBtn = document.createElement("button");
+                joinBtn.textContent = "Gabung";
+                joinBtn.onclick = () => {
+                  window.location.href = "/private-chat?roomId=" + data.roomId;
+                };
+                item.appendChild(joinBtn);
+              }
+
+              document.getElementById("notificationList").appendChild(item);
+            }
+          );
+        });
+      }
+
+      window.onload = connectWebSocket;
+    </script>
+  </body>
+</html>

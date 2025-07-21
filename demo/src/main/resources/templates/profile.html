@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Profil Pengguna</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background: #f5f7fa;
+        min-height: 100vh;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 220px;
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 0 0 0;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        box-shadow: 2px 0 16px rgba(30,60,114,0.08);
+      }
+      .sidebar .logo {
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-bottom: 36px;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar .logo span {
+        background: #fff;
+        color: #2a5298;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .sidebar nav {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 40px;
+      }
+      .sidebar nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 32px;
+        border-radius: 8px 0 0 8px;
+        font-weight: 500;
+        transition: background 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar nav a.active, .sidebar nav a:hover {
+        background: #fff;
+        color: #2a5298;
+      }
+      .sidebar .sidebar-bottom {
+        margin-top: auto;
+        padding-bottom: 32px;
+      }
+      .sidebar .sidebar-bottom button {
+        background: #fff;
+        color: #2a5298;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 24px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar .sidebar-bottom button:hover {
+        background: #e0e0e0;
+        color: #1e3c72;
+      }
+
+      .main-content {
+        margin-left: 220px;
+        width: calc(100vw - 220px);
+        padding: 40px 0 40px 0;
+        background: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .profile-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px 30px;
+        max-width: 500px;
+        width: 100%;
+        animation: fadeIn 0.6s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h2 {
+        text-align: center;
+        color: #2a5298;
+        margin-bottom: 30px;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .user-info {
+        background: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+      }
+
+      .user-info p {
+        margin: 10px 0;
+      }
+
+      .user-info strong {
+        color: #2a5298;
+      }
+
+      .status {
+        color: green;
+        font-weight: 600;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(45deg, #2a5298, #1e3c72);
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c0392b;
+      }
+
+      .login-prompt {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .login-prompt a {
+        color: #2a5298;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        width: 400px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-title {
+        color: #2a5298;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .modal-close {
+        cursor: pointer;
+        font-size: 24px;
+        color: #999;
+      }
+
+      .modal-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        padding: 12px 15px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="password"]:focus {
+        border-color: #2a5298;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.2);
+      }
+
+      .form-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      @media (max-width: 500px) {
+        .profile-container {
+          padding: 30px 20px;
+        }
+
+        .actions {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo"><span>C</span>chat.in</div>
+      <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile" class="active">Profile</a>
+        <a href="/join-private-room">Join Private Room</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <form action="/logout" method="post" style="margin:0;">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button type="submit">Logout</button>
+        </form>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="profile-container">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 24px;">
+          <div class="avatar" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(45deg, #1e3c72, #2a5298); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin-bottom: 8px;">
+            [[${user.username.substring(0,1).toUpperCase()}]]
+          </div>
+        </div>
+      <!-- Jika user login -->
+      <div th:if="${user != null}">
+        <div class="user-info">
+          <p><strong>Nama Pengguna:</strong> [[${user.username}]]</p>
+          <p><strong>Email:</strong> [[${user.email}]]</p>
+          <p><strong>Status:</strong> <span class="status">Online</span></p>
+        </div>
+
+        <div class="actions" style="justify-content: center;">
+          <form method="post" action="/profile/delete">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+            <button
+              class="btn btn-danger"
+              type="submit"
+              onclick="return confirm('Apakah Anda yakin ingin menghapus akun?')"
+            >
+              Hapus Akun
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Jika user tidak login -->
+      <div th:if="${user == null}">
+        <p class="login-prompt">Silakan login terlebih dahulu.</p>
+        <div class="login-prompt">
+          <a href="/login">Login</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Profil dihapus -->
+  </body>
+</html>

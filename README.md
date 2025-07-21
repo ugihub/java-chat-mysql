@@ -34,7 +34,7 @@ src/
 ```
 
 ## 🚀 Cara Menjalankan
-Jangan lupa untuk menginstall mvn terlebih dahulu dan memastikan bahwa java sudah terinstall di laptop kamu.
+Jangan lupa untuk menginstall mvn terlebih dahulu dan memastikan bahwa java sudah terinstall di perangkat kamu.
 
 1. Clone proyek:
    ```bash
@@ -112,5 +112,5 @@ message
   room_private_id → foreign key ke room_private.id
 ```
 
-## Salam Hangat Developer
+## 🙏 Salam Hangat Developer
 Terimakasih karena sudah menggunakan program yang kami buat kedepan nya semoga proyek ini bisa di kembangkan secara bertahap, konsisten dan tertata agar mencapai sebuah program sempurna tanpa bug dan lain sebagainya.

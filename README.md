@@ -34,6 +34,8 @@ src/
 ```
 
 ## 🚀 Cara Menjalankan
+Jangan lupa untuk menginstall mvn terlebih dahulu dan memastikan bahwa java sudah terinstall di laptop kamu.
+
 1. Clone proyek:
    ```bash
    git clone [repo-url]
@@ -109,3 +111,6 @@ message
   user_id → foreign key ke user.id
   room_private_id → foreign key ke room_private.id
 ```
+
+## Salam Hangat Developer
+Terimakasih karena sudah menggunakan program yang kami buat kedepan nya semoga proyek ini bisa di kembangkan secara bertahap, konsisten dan tertata agar mencapai sebuah program sempurna tanpa bug dan lain sebagainya.
